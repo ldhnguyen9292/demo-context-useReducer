@@ -1,24 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useReducer, createContext } from "react";
+import ChildrenComponent from "./children";
 
+//Initial State
+const initialState = { onOff: true };
+
+const reducer = (state, action) => {
+  const { type, data } = action;
+  console.log(data);
+  switch (type) {
+    case "CHANGE_STATUS":
+      state.onOff = data;
+      return { ...state };
+    default:
+      return state;
+  }
+};
+
+//Create Store
+export const StoreContent = createContext();
+export const StoreUpdate = createContext();
+
+const Store = ({ children }) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  return (
+    <StoreContent.Provider value={state}>
+      <StoreUpdate.Provider value={dispatch}>{children}</StoreUpdate.Provider>
+    </StoreContent.Provider>
+  );
+};
+
+//Using
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Store>
+      <ChildrenComponent />
+    </Store>
   );
 }
 
